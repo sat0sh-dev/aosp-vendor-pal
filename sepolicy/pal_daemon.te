@@ -9,9 +9,9 @@
 # - Write to syslog for logging
 
 # Type declarations
-type pal_daemon, domain;
-# Add vendor_file_type to allow entrypoint (neverallow bypass for product partition)
-type pal_daemon_exec, exec_type, vendor_file_type, file_type;
+# Product partition requires: coredomain for domain, system_file_type for exec
+type pal_daemon, domain, coredomain;
+type pal_daemon_exec, exec_type, file_type, system_file_type;
 
 # Domain transition from init
 init_daemon_domain(pal_daemon)

@@ -114,12 +114,15 @@ int create_multicast_socket() {
     mreq.imr_interface.s_addr = INADDR_ANY;  // 全インターフェース
 
     if (setsockopt(sock, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq)) < 0) {
-        syslog(LOG_ERR, "Failed to join multicast group: %s", strerror(errno));
-        close(sock);
-        return -1;
+        // Graceful degradation: エミュレータ等でmulticast不可の場合も継続
+        syslog(LOG_WARNING, "Failed to join multicast group: %s (continuing without multicast)", strerror(errno));
+        syslog(LOG_WARNING, "  This is expected on emulator - multicast receive disabled");
+        // ソケットは閉じずに返す（UDS通信等は可能）
+    } else {
+        syslog(LOG_INFO, "Joined multicast group: %s", MULTICAST_GROUP);
     }
 
-    syslog(LOG_INFO, "Multicast socket created successfully");
+    syslog(LOG_INFO, "Multicast socket created");
     syslog(LOG_INFO, "  Group: %s", MULTICAST_GROUP);
     syslog(LOG_INFO, "  Port: %d", MULTICAST_PORT);
     syslog(LOG_INFO, "  SO_REUSEADDR: enabled");

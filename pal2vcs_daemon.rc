@@ -6,14 +6,12 @@ service pal2vcs_daemon /product/bin/pal2vcs_daemon
     user system
     group system inet
     setenv VSOMEIP_CONFIGURATION /product/etc/vsomeip/pal2vcs.json
-    disabled
 
 # Create vsomeip runtime directory on boot
 on post-fs-data
     mkdir /product/run/someip 0755 system system
     mkdir /data/local/tmp 0777 root root
 
-# Auto-start after boot (disabled by default for manual testing)
-# Uncomment to enable auto-start:
-# on property:sys.boot_completed=1
-#     start pal2vcs_daemon
+# Auto-start after boot
+on property:sys.boot_completed=1
+    start pal2vcs_daemon

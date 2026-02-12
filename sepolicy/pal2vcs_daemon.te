@@ -41,10 +41,11 @@ allow pal2vcs_daemon port:tcp_socket name_connect;
 allow pal2vcs_daemon logd:unix_dgram_socket sendto;
 allow pal2vcs_daemon logdr_socket:sock_file write;
 
-# Phase 4.2.1: vsomeip internal socket operations
-# vsomeip creates UDS sockets at /data/misc/vsomeip/ (VSOMEIP_BASE_PATH)
+# Phase 4.2.1: vsomeip internal socket and file operations
+# vsomeip creates UDS sockets and lock files at /data/misc/vsomeip/ (VSOMEIP_BASE_PATH)
 allow pal2vcs_daemon vsomeip_data_file:dir { create_dir_perms rw_dir_perms };
 allow pal2vcs_daemon vsomeip_data_file:sock_file { create setattr getattr unlink write };
+allow pal2vcs_daemon vsomeip_data_file:file { create open read write getattr setattr unlink };
 
 # UDS server socket for receiving commands from Data Broker
 allow pal2vcs_daemon self:unix_stream_socket { bind listen accept };

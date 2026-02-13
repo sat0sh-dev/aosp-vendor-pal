@@ -1,5 +1,6 @@
-# PAL2VCS Daemon (Phase 4.2)
+# PAL2VCS Daemon (Phase 4.3)
 # SET direction: Data Broker -> PAL2VCS -> VCS (via SOME/IP)
+# Features: ECDH key exchange + HMAC-SHA256 message authentication
 
 service pal2vcs_daemon /product/bin/pal2vcs_daemon
     class main
@@ -8,8 +9,8 @@ service pal2vcs_daemon /product/bin/pal2vcs_daemon
     setenv VSOMEIP_CONFIGURATION /product/etc/vsomeip/pal2vcs.json
     setenv VSOMEIP_BASE_PATH /data/misc/vsomeip/
 
-# Create vsomeip socket directory on boot (Phase 4.2.1)
-# Use /data/misc/ like db_daemon for product policy compatibility
+# Create vsomeip socket directory on boot (Phase 4.2.1/4.3)
+# Use /data/misc/ for product policy compatibility (core_data_file_type)
 on post-fs-data
     mkdir /data/misc/vsomeip 0755 system system
 

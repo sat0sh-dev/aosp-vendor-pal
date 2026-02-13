@@ -1,31 +1,39 @@
-# PAL2VCS Daemon SELinux Policy (Phase 4.2)
+# PAL2VCS Daemon SELinux Policy (Phase 4.3)
 #
 # Product partition module
 #
 # This policy allows pal2vcs_daemon to:
 # - Connect to Data Broker via UDS (receive SET commands)
 # - Use SOME/IP (vsomeip) for VCS communication
+# - Connect to KeystoreCrypto service for ECDH key exchange
 # - Write to syslog for logging
 #
-# Phase 4.2.1: Enforcing mode enabled
+# Phase 4.2.1/4.3: Enforcing mode with MAC authentication
 # vsomeip socket directory uses core_data_file_type to bypass neverallow
 
 # Type declarations
 type pal2vcs_daemon, domain, coredomain, mlstrustedsubject;
 type pal2vcs_daemon_exec, exec_type, file_type, system_file_type;
 
-# Phase 4.2.1: vsomeip socket directory type
+# Phase 4.2.1/4.3: vsomeip socket directory type
 # core_data_file_type is exempted from coredomain neverallow rules
 type vsomeip_data_file, file_type, data_file_type, core_data_file_type;
 
 # Domain transition from init
 init_daemon_domain(pal2vcs_daemon)
 
+# UDS socket server (pal2vcs.sock in /data/misc/vsomeip/)
+allow pal2vcs_daemon vsomeip_data_file:dir { search read write add_name remove_name };
+allow pal2vcs_daemon vsomeip_data_file:sock_file { create read write unlink setattr getattr };
+allow pal2vcs_daemon self:unix_stream_socket { create bind listen accept read write getopt setopt shutdown };
+
 # UDS socket client for Data Broker connection
-allow pal2vcs_daemon self:unix_stream_socket { create connect read write getopt setopt shutdown };
 allow pal2vcs_daemon db_data_file:dir search;
 allow pal2vcs_daemon db_data_file:sock_file write;
 allow pal2vcs_daemon db_daemon:unix_stream_socket connectto;
+
+# Phase 4.3: Connect to KeystoreCrypto service (platform_app, abstract namespace)
+allow pal2vcs_daemon platform_app:unix_stream_socket connectto;
 
 # Network access for SOME/IP (vsomeip uses TCP and UDP)
 allow pal2vcs_daemon self:tcp_socket { create bind connect listen accept read write ioctl setopt getopt shutdown };
@@ -41,7 +49,7 @@ allow pal2vcs_daemon port:tcp_socket name_connect;
 allow pal2vcs_daemon logd:unix_dgram_socket sendto;
 allow pal2vcs_daemon logdr_socket:sock_file write;
 
-# Phase 4.2.1: vsomeip internal socket and file operations
+# Phase 4.2.1/4.3: vsomeip internal socket and file operations
 # vsomeip creates UDS sockets and lock files at /data/misc/vsomeip/ (VSOMEIP_BASE_PATH)
 allow pal2vcs_daemon vsomeip_data_file:dir { create_dir_perms rw_dir_perms };
 allow pal2vcs_daemon vsomeip_data_file:sock_file { create setattr getattr unlink write };

@@ -8,9 +8,9 @@
 # Phase 3.13: Test binary (uses same domain)
 /product/bin/pal_vcs_mac_test    u:object_r:pal_daemon_exec:s0
 
-# Phase 4.2: PAL2VCS Daemon (SOME/IP)
+# Phase 4.3: PAL2VCS Daemon (SOME/IP + MAC)
 /product/bin/pal2vcs_daemon    u:object_r:pal2vcs_daemon_exec:s0
 
-# Phase 4.2.1: vsomeip socket directory
-# Use /data/misc/ for product policy compatibility (like db_daemon)
+# Phase 4.2.1/4.3: vsomeip socket directory (Enforcing mode)
+# Use /data/misc/ for product policy compatibility (core_data_file_type)
 /data/misc/vsomeip(/.*)?    u:object_r:vsomeip_data_file:s0

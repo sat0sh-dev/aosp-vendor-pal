@@ -70,15 +70,19 @@ cc_binary {
     ],
 }
 
-// Phase 4.2: PAL2VCS Daemon
+// Phase 4.3: PAL2VCS Daemon with MAC Authentication
 // SET direction: Data Broker -> PAL2VCS -> VCS (via SOME/IP)
+// Includes ECDH key exchange and HMAC-SHA256 message authentication
 cc_binary {
     name: "pal2vcs_daemon",
     product_specific: true,
 
     srcs: [
         "pal2vcs_daemon.cpp",
+        "keystore_crypto_client.cpp",  // Phase 4.3: Keystore crypto client
     ],
+
+    local_include_dirs: ["."],
 
     shared_libs: [
         "libvsomeip3",
@@ -99,7 +103,7 @@ cc_binary {
     cppflags: [
         "-std=c++17",
         "-fexceptions",
-        "-DVSOMEIP_BASE_PATH=\"/dev/socket/vsomeip/\"",
+        "-DVSOMEIP_BASE_PATH=\"/data/misc/vsomeip/\"",
     ],
 
     cflags: [

@@ -37,7 +37,7 @@ allow pal2vcs_daemon platform_app:unix_stream_socket connectto;
 
 # Network access for SOME/IP (vsomeip uses TCP and UDP)
 allow pal2vcs_daemon self:tcp_socket { create bind connect listen accept read write ioctl setopt getopt shutdown };
-allow pal2vcs_daemon self:udp_socket { create bind read write ioctl setopt getopt };
+allow pal2vcs_daemon self:udp_socket { create bind read write ioctl setopt getopt shutdown };
 allow pal2vcs_daemon self:capability { net_raw net_admin };
 allow pal2vcs_daemon node:tcp_socket node_bind;
 allow pal2vcs_daemon node:udp_socket node_bind;
@@ -51,6 +51,7 @@ allow pal2vcs_daemon self:netlink_route_socket { create bind read write nlmsg_re
 # Android firewall marking (fwmarkd socket owned by netd)
 allow pal2vcs_daemon fwmarkd_socket:sock_file write;
 allow pal2vcs_daemon netd:unix_stream_socket connectto;
+allow netd pal2vcs_daemon:fd use;
 
 # Allow syslog/logd access for logging
 allow pal2vcs_daemon logd:unix_dgram_socket sendto;
